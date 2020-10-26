@@ -1,13 +1,20 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>home</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button color="secondary" (click)="showPopover($event)">
+        <ion-icon slot="icon-only" ios="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <ion-searchbar
    showCancelButton="focus"
-   ionSearch="change( $event"
+   inputmode="text"
+   (ionChange)="change( $event )"
+   animated
   ></ion-searchbar>
 
   <ion-list>

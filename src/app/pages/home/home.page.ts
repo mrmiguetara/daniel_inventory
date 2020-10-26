@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, PopoverController } from '@ionic/angular';
 import { Item } from '../../models/item';
 import { StockService } from '../../services/stock.service';
+import { HomePopoverComponent } from '../../components/home-popover/home-popover.component';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,7 @@ export class HomePage implements OnInit {
 
   items: Item[] = []
 
-  constructor(private stockService: StockService, private alertController: AlertController) { 
+  constructor(private stockService: StockService, private alertController: AlertController, private popoverController: PopoverController) { 
   }
 
   ngOnInit() {
@@ -29,8 +30,21 @@ export class HomePage implements OnInit {
     })
   }
 
+  async showPopover( ev: any) {
+    const popover = await this.popoverController.create({
+      component: HomePopoverComponent,
+      event: ev,
+    });
+    return await popover.present();
+
+  }
+
   async onClick() {
     await this.stockService.saveItem({name: 'test'+ this.item.quantity, id: 'test', quantity: 0})
+  }
+
+  change( event ) {
+    this.filterText = event.detail.value;
   }
   async presentAlertPrompt() {
     const alert = await this.alertController.create({
