@@ -35,6 +35,24 @@ export class HomePage implements OnInit {
       component: HomePopoverComponent,
       event: ev,
     });
+
+    popover.onDidDismiss().then( params => {
+      const data = params.data;
+      if (data) {
+        switch (data) {
+          case 'clear':
+            console.log('el chicharron no es carne')
+            this.stockService.cleanItemStorage();
+            this.updateItems()
+            break;
+          case 'exit':
+            console.log('pelotero')
+            break;
+          default:
+            break;
+        }
+      }
+    })
     return await popover.present();
 
   }
@@ -79,10 +97,10 @@ export class HomePage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: async (data: any) => {
+          handler: async (data: Item) => {
             await this.stockService.saveItem(data);
             this.updateItems()
-            console.log(data)
+            console.log(typeof(data.quantity))
           }
         }
       ]

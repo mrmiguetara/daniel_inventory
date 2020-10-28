@@ -21,15 +21,21 @@ export class StockService {
     return this.storage.get('items')
   }
 
-  public async getItem(id: string) {
-    await this.storage.get('items').then( items => {
+  public async getItem(id: string): Promise<void|Item> {
+    let requestedItem: void|Item = await this.storage.get('items').then( items => {
       items.forEach(item => {
+        let retItem: Item;
         if (item.id == id) {
           return item;
         }
+        return {id: 'Not found', name:'Not Found', quantity: 0};
       });
     })
-    return null;
+    return requestedItem;
+  }
+
+  public cleanItemStorage() {
+    return this.storage.clear();
   }
 
   public async saveItem(item: Item) {
@@ -37,7 +43,7 @@ export class StockService {
     let updated: boolean = false;
     items.forEach(savedItem => {
       if (savedItem.id == item.id) {
-        savedItem.quantity ++;
+        savedItem.quantity = Number(item.quantity) + Number(savedItem.quantity);
         updated = true;
       }
     });

@@ -1,9 +1,9 @@
 <ion-content>
   <ion-list>
-    <ion-item detail>
+    <ion-item (click)="sendSignal('clear')" detail>
       <ion-label>Clear Items</ion-label>
     </ion-item>
-    <ion-item detail>
+    <ion-item (click)="sendSignal('exit')" detail>
       <ion-label>Register item exit</ion-label>
     </ion-item>
   </ion-list>
