@@ -21,17 +21,16 @@ export class StockService {
     return this.storage.get('items')
   }
 
-  public async getItem(id: string): Promise<void|Item> {
-    let requestedItem: void|Item = await this.storage.get('items').then( items => {
-      items.forEach(item => {
-        let retItem: Item;
+  public async getItem(id: string): Promise<Item> {
+    const allItems = await this.getItems().then( items => items)
+    return new Promise( (resolve, reject) => {
+      allItems.forEach(item => {
         if (item.id == id) {
-          return item;
+          resolve(item)
         }
-        return {id: 'Not found', name:'Not Found', quantity: 0};
       });
+      reject('Not found')
     })
-    return requestedItem;
   }
 
   public cleanItemStorage() {
