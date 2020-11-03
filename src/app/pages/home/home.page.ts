@@ -67,7 +67,7 @@ export class HomePage implements OnInit {
   async presentAlertPrompt() {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Prompt!',
+      header: 'Agregar nuevo Item',
       inputs: [
         {
           name: 'id',

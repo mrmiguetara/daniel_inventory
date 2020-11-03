@@ -230,3 +230,21 @@
     --ion-card-background: #1e1e1e;
   }
 }
+
+:root {
+  --ion-color-positive: #1e9f3a;
+  --ion-color-positive-rgb: 30,159,58;
+  --ion-color-positive-contrast: #ffffff;
+  --ion-color-positive-contrast-rgb: 255,255,255;
+  --ion-color-positive-shade: #1a8c33;
+  --ion-color-positive-tint: #35a94e;
+}
+
+.ion-color-positive {
+  --ion-color-base: var(--ion-color-positive);
+  --ion-color-base-rgb: var(--ion-color-positive-rgb);
+  --ion-color-contrast: var(--ion-color-positive-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-positive-contrast-rgb);
+  --ion-color-shade: var(--ion-color-positive-shade);
+  --ion-color-tint: var(--ion-color-positive-tint);
+}
