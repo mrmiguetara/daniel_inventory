@@ -19,7 +19,7 @@ export class StockPipe implements PipeTransform {
     console.log(value.filter(item => item.id.toLocaleLowerCase().includes(text)))
 
     return value.filter(
-      item=> item.id.toLocaleLowerCase().includes(text)
+      item=> item.id.toLocaleLowerCase().includes(text) || item.name.toLocaleLowerCase().includes(text)
       
     )
   }
