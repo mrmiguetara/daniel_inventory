@@ -42,6 +42,7 @@ export class StockService {
     let updated: boolean = false;
     items.forEach(savedItem => {
       if (savedItem.id == item.id) {
+        savedItem.name = item.name;
         savedItem.quantity = Number(item.quantity) + Number(savedItem.quantity);
         updated = true;
       }

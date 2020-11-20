@@ -1,0 +1,17 @@
+<ion-content class="ion-padding">
+  <form [formGroup]="loginForm" (ngSubmit)="createItem()">
+    <ion-item>
+      <ion-label position="floating">Codigo</ion-label>
+      <ion-input id="id" formControlName="id" type="text"></ion-input>
+      <ion-icon slot="end" name="scan-outline" (click)="scan()"></ion-icon>
+
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input id="name" formControlName="name" type="text"></ion-input>
+    </ion-item>
+    <ion-button block color="primary" (click)="createItem()" [disabled]="loginForm.invalid">
+      Agregar Elemento
+    </ion-button>
+  </form>
+</ion-content>

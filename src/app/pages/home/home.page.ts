@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, PopoverController } from '@ionic/angular';
+import { AlertController, PopoverController, ModalController } from '@ionic/angular';
 import { Item } from '../../models/item';
 import { StockService } from '../../services/stock.service';
 import { HomePopoverComponent } from '../../components/home-popover/home-popover.component';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { NewItemModalComponent } from '../../components/new-item-modal/new-item-modal.component';
+import { CreateTransModalComponent } from '../../components/create-trans-modal/create-trans-modal.component';
 
 @Component({
   selector: 'app-home',
@@ -11,18 +14,23 @@ import { HomePopoverComponent } from '../../components/home-popover/home-popover
 })
 export class HomePage implements OnInit {
 
-  item: Item = {name: 'no name', id: 'none', quantity: 0};
 
   filterText: string = '';
 
   items: Item[] = []
-
-  constructor(private stockService: StockService, private alertController: AlertController, private popoverController: PopoverController) { 
+  constructor(
+    private stockService: StockService, 
+    private alertController: AlertController, 
+    private popoverController: PopoverController,
+    private barcodeScanner: BarcodeScanner,
+    private modalController: ModalController) { 
   }
 
   ngOnInit() {
     this.updateItems();
   }
+
+  
 
   updateItems() {
     this.stockService.getItems().then( items => {
@@ -40,9 +48,8 @@ export class HomePage implements OnInit {
       const data = params.data;
       if (data) {
         switch (data) {
-          case 'clear':
-            console.log('el chicharron no es carne')
-            this.stockService.cleanItemStorage();
+          case 'scan':
+            this.scan();
             this.updateItems()
             break;
           case 'exit':
@@ -54,59 +61,73 @@ export class HomePage implements OnInit {
       }
     })
     return await popover.present();
-
-  }
-
-  async onClick() {
-    await this.stockService.saveItem({name: 'test'+ this.item.quantity, id: 'test', quantity: 0})
   }
 
   change( event ) {
     this.filterText = event.detail.value;
   }
+  doRefresh(event) {
+    this.updateItems();
+    event.target.complete();
+  }
   async presentAlertPrompt() {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Agregar nuevo Item',
-      inputs: [
-        {
-          name: 'id',
-          type: 'text',
-          placeholder: 'Item ID'
-        },
-        {
-          name: 'name',
-          type: 'text',
-          placeholder: 'Item name'
-        },
-        {
-          name: 'quantity',
-          type: 'number',
-          min: 0,
-          max: 500,
-          placeholder: 'Quantity'
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel');
-          }
-        }, {
-          text: 'Ok',
-          handler: async (data: Item) => {
-            await this.stockService.saveItem(data);
-            this.updateItems()
-            console.log(typeof(data.quantity))
-          }
-        }
-      ]
-    });
+    const modal = await this.modalController.create({
+      component: NewItemModalComponent
+    })
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if(data) {
+      this.stockService.saveItem(data as Item).then( () => {
+        this.updateItems();
+      })
+    }    
+    this.updateItems();
+  }
 
-    await alert.present();
+  scan() {
+    this.barcodeScanner.scan().then(async (barcodeData) => {
+      console.log('Barcode data', barcodeData);
+      this.filterText = barcodeData.text;
+    }).catch( async (err) => {
+      const alert = await this.alertController.create({
+        message: `Error: ${err}`,
+        buttons:[
+          {
+            text: 'Aceptar'
+          }
+        ]
+      })
+      await alert.present()
+    });
+  }
+
+  segmentChanged(event) {
+
+  }
+
+  async createTransaction(item, positive) {
+    const modal = await this.modalController.create({
+      component: CreateTransModalComponent,
+      componentProps: {
+        item: item.id,
+        positive: positive
+      }
+    })
+    await modal.present()
+    this.updateItems()
+  }
+
+  async swipe(event, item) {
+    console.log(event)
+    if(event.detail.side === 'start') {
+      console.log('Salida');
+      await this.createTransaction(item, false)
+    }
+    if (event.detail.side === 'end') {
+      console.log('Entrada')
+      await this.createTransaction(item, true)
+    }
+
   }
 
 

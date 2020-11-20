@@ -12,7 +12,7 @@ export class CreateTransModalComponent implements OnInit {
   @Input() item: string;
   @Input() positive: boolean = false;
 
-  diff: number = 0;
+  diff: number;
   constructor(private modalController: ModalController, private transactionService: TransactionService) { }
 
   ngOnInit() {}
@@ -32,6 +32,6 @@ export class CreateTransModalComponent implements OnInit {
     this.transactionService.createTransaction({itemId: this.item, date: new Date(), positive: this.positive, diff: this.diff}).then(() => {
       console.log('Done')
     })
-    this.dismiss()
+    this.dismiss();
   }
 }
